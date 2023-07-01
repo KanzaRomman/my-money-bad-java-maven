@@ -1,4 +1,4 @@
-package enums;
+package com.example.geektrust.enums;
 
 public enum Month {
     JANUARY(1),
