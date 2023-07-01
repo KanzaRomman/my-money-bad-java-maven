@@ -26,8 +26,6 @@ public class Main {
 
     public static void main(String[] args) {
         Portfolio portfolio = new Portfolio();
-
-        List<Double> sip = new LinkedList<>();
         Investment updatedInvestment = new Investment();
         Investment investment = new Investment();
 
@@ -47,11 +45,11 @@ public class Main {
                         break;
                     case SIP:
                         for (int i = 1; i < instructions.length; i++) {
-                            sip.add(Double.parseDouble(instructions[i]));
+                            portfolio.addToSystematicInvestmentPlan(Double.parseDouble(instructions[i]));
                         }
                         break;
                     case CHANGE:
-                        count = changeGains(portfolio, sip, instructions, count);
+                        count = changeGains(portfolio, instructions, count);
                         break;
                     case BALANCE:
                         printBalance(portfolio, Month.valueOf(instructions[1]).getMonthNumber() - 1);
@@ -72,7 +70,7 @@ public class Main {
         }
     }
 
-    public static int changeGains(Portfolio portfolio, List<Double> sip, String[] instructions, int count) {
+    public static int changeGains(Portfolio portfolio, String[] instructions, int count) {
         Pattern p = Pattern.compile("^-?\\d+\\.?\\d+");
         Investment listValues = portfolio.getInvestmentByMonth(count - 1);
 
@@ -88,7 +86,7 @@ public class Main {
                 double temp = listValues.getInvestment(i - 1);
 
                 if (count - 1 > 0) {
-                    double s1 = temp + sip.get(i - 1);
+                    double s1 = temp + portfolio.getSystematicInvestmentPlanAmount(i - 1);
                     double s2 = s1 * value;
                     double s3 = Math.floor(s2 / 100);
                     double s4 = s3 + s1;
