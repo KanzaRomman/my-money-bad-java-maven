@@ -1,5 +1,6 @@
 package com.example.geektrust;
 
+import com.example.geektrust.dtos.Portfolio;
 import com.example.geektrust.enums.Month;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Map<Integer, List<Double>> portfolio = new LinkedHashMap<>();
+        Portfolio portfolio = new Portfolio();
 
         List<Double> sip = new LinkedList<>();
         List<Double> updatedInvestment = new LinkedList<>();
@@ -58,7 +59,7 @@ public class Main {
                         printBalance(portfolio, Month.valueOf(instructions[1]).getMonthNumber() - 1);
                         break;
                     case REBALANCE:
-                        int size = portfolio.size() - 1;
+                        int size = portfolio.getPortfolioSize() - 1;
                         if (size % 6 == 0) {
                             printRebalance(portfolio, updatedInvestment, count);
                         } else {
@@ -73,9 +74,9 @@ public class Main {
         }
     }
 
-    public static int changeGains(Map<Integer, List<Double>> portfolio, List<Double> sip, String[] instructions, int count) {
+    public static int changeGains(Portfolio portfolio, List<Double> sip, String[] instructions, int count) {
         Pattern p = Pattern.compile("^-?\\d+\\.?\\d+");
-        List<Double> listValues = portfolio.get(count - 1);
+        List<Double> listValues = portfolio.getInvestmentByMonth(count - 1);
 
         List<Double> updatedInvestment = new LinkedList<>();
 
@@ -105,15 +106,15 @@ public class Main {
             }
         }
         updatedInvestment.add(total);
-        portfolio.put(count, updatedInvestment);
+        portfolio.addToPortfolio(count, updatedInvestment);
 
         count++;
 
         return count;
     }
 
-    public static int allocateMoney(Map<Integer, List<Double>> portfolio, List<Double> investment, int count,
-            String[] instructions) {
+    public static int allocateMoney(Portfolio portfolio, List<Double> investment, int count,
+                                    String[] instructions) {
         double total;
         double temp;
         total = 0;
@@ -125,7 +126,7 @@ public class Main {
         }
         investment.add(total);
 
-        portfolio.put(count, investment);
+        portfolio.addToPortfolio(count, investment);
 
         calculatePercent(investment, total);
 
@@ -139,13 +140,13 @@ public class Main {
         }
     }
 
-    public static void printRebalance(Map<Integer, List<Double>> portfolio, List<Double> updatedInvestment, int count) {
+    public static void printRebalance(Portfolio portfolio, List<Double> updatedInvestment, int count) {
         double total;
         List<Double> listValues;
         Double printValue;
         StringBuilder sb = new StringBuilder();
 
-        listValues = portfolio.get(count - 1);
+        listValues = portfolio.getInvestmentByMonth(count - 1);
 
         total = listValues.get(listValues.size() - 1);
 
@@ -158,17 +159,17 @@ public class Main {
 
         updatedInvestment.add(total);
 
-        portfolio.put(count - 1, updatedInvestment);
+        portfolio.addToPortfolio(count - 1, updatedInvestment);
 
         System.out.println(sb);
     }
 
-    public static String printBalance(Map<Integer, List<Double>> portfolio, int index) {
-        List<Double> monthlyValues = portfolio.get(index + 1);
+    public static String printBalance(Portfolio portfolio, int index) {
+        List<Double> monthlyValues = portfolio.getInvestmentByMonth(index + 1);
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < monthlyValues.size() - 1; i++) {
-           sb.append(monthlyValues.get(i).shortValue());
+            sb.append(monthlyValues.get(i).shortValue());
             sb.append(" ");
         }
         System.out.println(sb);
