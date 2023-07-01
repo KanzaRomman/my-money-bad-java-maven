@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public class Main {
     static double[] portfolioPercent = new double[3];
-    int count = 0;
+    static int count = 0;
 
     enum Command  {
         ALLOCATE,
@@ -29,8 +29,6 @@ public class Main {
         Investment updatedInvestment = new Investment();
         Investment investment = new Investment();
 
-        int count = 0;
-
         try (Stream<String> fileLines = Files.lines(new File(args[0]).toPath())) {
             List<String> lines = fileLines.map(String::trim).filter(s -> !s.matches(" ")).collect(Collectors.toList());
 
@@ -41,7 +39,7 @@ public class Main {
 
                 switch (command) {
                     case ALLOCATE:
-                        count = allocateMoney(portfolio, investment, count, instructions);
+                        allocateMoney(portfolio, investment, instructions);
                         break;
                     case SIP:
                         for (int i = 1; i < instructions.length; i++) {
@@ -49,7 +47,7 @@ public class Main {
                         }
                         break;
                     case CHANGE:
-                        count = changeGains(portfolio, instructions, count);
+                        changeGains(portfolio, instructions);
                         break;
                     case BALANCE:
                         printBalance(portfolio, Month.valueOf(instructions[1]).getMonthNumber() - 1);
@@ -57,7 +55,7 @@ public class Main {
                     case REBALANCE:
                         int size = portfolio.getPortfolioSize() - 1;
                         if (size % 6 == 0) {
-                            printRebalance(portfolio, updatedInvestment, count);
+                            printRebalance(portfolio, updatedInvestment);
                         } else {
                             System.out.println("CANNOT_REBALANCE");
                         }
@@ -70,7 +68,7 @@ public class Main {
         }
     }
 
-    public static int changeGains(Portfolio portfolio, String[] instructions, int count) {
+    public static void changeGains(Portfolio portfolio, String[] instructions) {
         Pattern p = Pattern.compile("^-?\\d+\\.?\\d+");
         Investment listValues = portfolio.getInvestmentByMonth(count - 1);
 
@@ -105,11 +103,9 @@ public class Main {
         portfolio.addToPortfolio(count, updatedInvestment);
 
         count++;
-
-        return count;
     }
 
-    public static int allocateMoney(Portfolio portfolio, Investment investment, int count,
+    public static void allocateMoney(Portfolio portfolio, Investment investment,
                                     String[] instructions) {
         double total;
         double temp;
@@ -127,7 +123,6 @@ public class Main {
         calculatePercent(investment, total);
 
         count++;
-        return count;
     }
 
     public static void calculatePercent(Investment investment, double total) {
@@ -136,7 +131,7 @@ public class Main {
         }
     }
 
-    public static void printRebalance(Portfolio portfolio, Investment updatedInvestment, int count) {
+    public static void printRebalance(Portfolio portfolio, Investment updatedInvestment) {
         double total;
         Investment listValues;
         Double printValue;
