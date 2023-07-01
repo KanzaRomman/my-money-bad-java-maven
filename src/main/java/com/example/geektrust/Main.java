@@ -43,9 +43,7 @@ public class Main {
                         allocateFundsAndUpdatePortfolio(portfolio, investment, Arrays.copyOfRange(instructions, 1, instructions.length));
                         break;
                     case SIP:
-                        for (int i = 1; i < instructions.length; i++) {
-                            portfolio.addToSystematicInvestmentPlan(Double.parseDouble(instructions[i]));
-                        }
+                        addSipToPortfolio(portfolio, instruction);
                         break;
                     case CHANGE:
                         changeGains(portfolio, instructions);
@@ -66,6 +64,12 @@ public class Main {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void addSipToPortfolio(Portfolio portfolio, String[]instructions) {
+        for (int i = 1; i < instructions.length; i++) {
+            portfolio.addToSystematicInvestmentPlan(Double.parseDouble(instructions[i]));
         }
     }
 
