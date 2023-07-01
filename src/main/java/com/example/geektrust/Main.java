@@ -1,5 +1,7 @@
 package com.example.geektrust;
 
+import enums.Month;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.LinkedHashMap;
@@ -23,33 +25,12 @@ public class Main {
         REBALANCE
     }
 
-    static List<String> createMonths() {
-        List<String> months = new LinkedList<>();
-
-        months.add("JANUARY");
-        months.add("FEBRUARY");
-        months.add("MARCH");
-        months.add("APRIL");
-        months.add("MAY");
-        months.add("JUNE");
-        months.add("JULY");
-        months.add("AUGUST");
-        months.add("SEPTEMBER");
-        months.add("OCTOBER");
-        months.add("NOVEMBER");
-        months.add("DECEMBER");
-
-        return months;
-    }
-
     public static void main(String[] args) {
         Map<Integer, List<Double>> portfolio = new LinkedHashMap<>();
 
         List<Double> sip = new LinkedList<>();
         List<Double> updatedInvestment = new LinkedList<>();
         List<Double> investment = new LinkedList<>();
-
-        List<String> months = createMonths();
 
         int count = 0;
 
@@ -74,7 +55,7 @@ public class Main {
                         count = changeGains(portfolio, sip, instructions, count);
                         break;
                     case BALANCE:
-                        printBalance(portfolio, months.indexOf(instructions[1]));
+                        printBalance(portfolio, Month.valueOf(instructions[1]).getMonthNumber() - 1);
                         break;
                     case REBALANCE:
                         int size = portfolio.size() - 1;
