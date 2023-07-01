@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Investment {
     private final List<Double> investments;
+    private Double totalInvestment;
 
     public Investment() {
         investments = new ArrayList<>();
@@ -20,5 +21,17 @@ public class Investment {
 
     public int getInvestmentCount() {
         return investments.size();
+    }
+
+    public Double getTotalInvestment() {
+        return totalInvestment;
+    }
+
+    public void setTotalInvestment() {
+        this.totalInvestment = investments.stream().mapToDouble(Double::doubleValue).sum();
+    }
+
+    public double getInvestmentPercentage(int index) {
+        return this.getInvestment(index) / this.getTotalInvestment();
     }
 }
