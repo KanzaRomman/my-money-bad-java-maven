@@ -5,18 +5,22 @@ import com.example.geektrust.dtos.Portfolio;
 import com.example.geektrust.enums.Month;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.util.Arrays;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.example.geektrust.helpers.FileInstructionHelper.extractCommandFromInstruction;
+import static com.example.geektrust.helpers.FileInstructionHelper.getInstructionFromFileLine;
+import static com.example.geektrust.helpers.FileInstructionHelper.getTrimmedLinesAsList;
+import static com.example.geektrust.helpers.FileInstructionHelper.getValuesFromInstruction;
+import static com.example.geektrust.helpers.FileInstructionHelper.readLinesFromFile;
 
 public class Main {
     static int count = 0;
 
-    enum Command  {
+    public enum Command  {
         ALLOCATE,
         SIP,
         CHANGE,
@@ -26,30 +30,30 @@ public class Main {
 
     public static void main(String[] args) {
 
-        try (Stream<String> fileLines = Files.lines(new File(args[0]).toPath())) {
-            List<String> lines = fileLines.map(String::trim).filter(s -> !s.matches(" ")).collect(Collectors.toList());
+        Path filePath = new File(args[0]).toPath();
+        try (Stream<String> rawFileLines = readLinesFromFile(filePath)) {
+            List<String> fileLines = getTrimmedLinesAsList(rawFileLines);
 
             Portfolio portfolio = new Portfolio();
             Investment updatedInvestment = new Investment();
             Investment investment = new Investment();
 
-            for (String line : lines) {
-                String[] instructions = line.trim().split(" ");
-
-                Command command = Command.valueOf(instructions[0]);
+            for (String fileLine : fileLines) {
+                String[] instruction = getInstructionFromFileLine(fileLine);
+                Command command = extractCommandFromInstruction(instruction);
 
                 switch (command) {
                     case ALLOCATE:
-                        allocateFundsAndUpdatePortfolio(portfolio, investment, Arrays.copyOfRange(instructions, 1, instructions.length));
+                        allocateFundsAndUpdatePortfolio(portfolio, investment, instruction);
                         break;
                     case SIP:
                         addSipToPortfolio(portfolio, instruction);
                         break;
                     case CHANGE:
-                        changeGains(portfolio, instructions);
+                        changeGains(portfolio, instruction);
                         break;
                     case BALANCE:
-                        printBalance(portfolio, Month.valueOf(instructions[1]).getMonthNumber() - 1);
+                        printBalance(portfolio, instruction);
                         break;
                     case REBALANCE:
                         int size = portfolio.getPortfolioSize() - 1;
@@ -67,18 +71,20 @@ public class Main {
         }
     }
 
-    private static void addSipToPortfolio(Portfolio portfolio, String[]instructions) {
-        for (int i = 1; i < instructions.length; i++) {
-            portfolio.addToSystematicInvestmentPlan(Double.parseDouble(instructions[i]));
+    private static void addSipToPortfolio(Portfolio portfolio, String[] instruction) {
+        String[] amounts = getValuesFromInstruction(instruction);
+        for (String amount : amounts) {
+            portfolio.addToSystematicInvestmentPlan(Double.parseDouble(amount));
         }
     }
 
     public static void allocateFundsAndUpdatePortfolio(
             Portfolio portfolio,
             Investment investment,
-            String[] funds
+            String[] instruction
     ) {
 
+        String[] funds = getValuesFromInstruction(instruction);
         allocateFunds(investment, funds);
         updatePortfolio(portfolio, investment, count);
 
@@ -138,7 +144,8 @@ public class Main {
         count++;
     }
 
-    public static String printBalance(Portfolio portfolio, int index) {
+    public static String printBalance(Portfolio portfolio, String[] instruction) {
+        int index = Month.valueOf(getValuesFromInstruction(instruction)[0]).getMonthNumber() - 1;
         Investment monthlyValues = portfolio.getInvestmentByMonth(index + 1);
         StringBuilder sb = new StringBuilder();
 
