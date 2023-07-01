@@ -6,6 +6,7 @@ import com.example.geektrust.enums.Month;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    static double[] portfolioPercent = new double[3];
     static int count = 0;
 
     enum Command  {
@@ -39,7 +39,7 @@ public class Main {
 
                 switch (command) {
                     case ALLOCATE:
-                        allocateMoney(portfolio, investment, instructions);
+                        allocateFundsAndUpdatePortfolio(portfolio, investment, Arrays.copyOfRange(instructions, 1, instructions.length));
                         break;
                     case SIP:
                         for (int i = 1; i < instructions.length; i++) {
@@ -105,30 +105,32 @@ public class Main {
         count++;
     }
 
-    public static void allocateMoney(Portfolio portfolio, Investment investment,
-                                    String[] instructions) {
-        double total;
-        double temp;
-        total = 0;
+    public static void allocateFundsAndUpdatePortfolio(
+            Portfolio portfolio,
+            Investment investment,
+            String[] funds
+    ) {
 
-        for (int i = 1; i < instructions.length; i++) {
-            temp = Double.parseDouble(instructions[i]);
-            total += temp;
-            investment.addToInvestment(temp);
-        }
-        investment.addToInvestment(total);
-
-        portfolio.addToPortfolio(count, investment);
-
-        calculatePercent(investment, total);
+        allocateFunds(investment, funds);
+        updatePortfolio(portfolio, investment, count);
 
         count++;
     }
 
-    public static void calculatePercent(Investment investment, double total) {
-        for (int i = 0; i < investment.getInvestmentCount()-1; i++) {
-            portfolioPercent[i] = investment.getInvestment(i) / total;
+    private static void allocateFunds(Investment investment, String[] funds) {
+
+        for (String fund : funds) {
+            investment.addToInvestment(
+                    Double.parseDouble(fund)
+            );
         }
+
+        investment.setTotalInvestment();
+    }
+
+    private static void updatePortfolio(Portfolio portfolio, Investment investment, int count) {
+        portfolio.addToPortfolio(count, investment);
+        portfolio.setAllocatedPercentage();
     }
 
     public static void printRebalance(Portfolio portfolio, Investment updatedInvestment) {
@@ -141,7 +143,7 @@ public class Main {
 
         total = listValues.getInvestment(listValues.getInvestmentCount() - 1);
 
-        for (double d : portfolioPercent) {
+        for (double d : portfolio.getAllocatedPercentage()) {
             updatedInvestment.addToInvestment(d * total);
             printValue = d * total;
             sb.append(printValue.shortValue());
