@@ -25,12 +25,13 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Portfolio portfolio = new Portfolio();
-        Investment updatedInvestment = new Investment();
-        Investment investment = new Investment();
 
         try (Stream<String> fileLines = Files.lines(new File(args[0]).toPath())) {
             List<String> lines = fileLines.map(String::trim).filter(s -> !s.matches(" ")).collect(Collectors.toList());
+
+            Portfolio portfolio = new Portfolio();
+            Investment updatedInvestment = new Investment();
+            Investment investment = new Investment();
 
             for (String line : lines) {
                 String[] instructions = line.trim().split(" ");
