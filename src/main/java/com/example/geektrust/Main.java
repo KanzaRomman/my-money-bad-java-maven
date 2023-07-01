@@ -110,13 +110,13 @@ public class Main {
                 if (count - 1 > 0) {
                     double s1 = temp + sip.get(i - 1);
                     double s2 = s1 * value;
-                    double s3 = s2 / 100;
+                    double s3 = Math.floor(s2 / 100);
                     double s4 = s3 + s1;
                     updatedInvestment.add(s4);
                     total += s4;
                 } else {
                     double a1 = temp * value;
-                    double a2 = a1 / 100;
+                    double a2 = Math.floor(a1 / 100);
                     double a3 = a2 + temp;
                     updatedInvestment.add(a3);
                     total += a3;
