@@ -1,5 +1,6 @@
 package com.example.geektrust;
 
+import com.example.geektrust.dtos.Investment;
 import com.example.geektrust.dtos.Portfolio;
 import com.example.geektrust.enums.Month;
 
@@ -30,8 +31,8 @@ public class Main {
         Portfolio portfolio = new Portfolio();
 
         List<Double> sip = new LinkedList<>();
-        List<Double> updatedInvestment = new LinkedList<>();
-        List<Double> investment = new LinkedList<>();
+        Investment updatedInvestment = new Investment();
+        Investment investment = new Investment();
 
         int count = 0;
 
@@ -76,9 +77,9 @@ public class Main {
 
     public static int changeGains(Portfolio portfolio, List<Double> sip, String[] instructions, int count) {
         Pattern p = Pattern.compile("^-?\\d+\\.?\\d+");
-        List<Double> listValues = portfolio.getInvestmentByMonth(count - 1);
+        Investment listValues = portfolio.getInvestmentByMonth(count - 1);
 
-        List<Double> updatedInvestment = new LinkedList<>();
+        Investment updatedInvestment = new Investment();
 
         double total = 0;
 
@@ -87,25 +88,25 @@ public class Main {
             if (m.find()) {
                 double value = Double.parseDouble(m.group());
 
-                double temp = listValues.get(i - 1);
+                double temp = listValues.getInvestment(i - 1);
 
                 if (count - 1 > 0) {
                     double s1 = temp + sip.get(i - 1);
                     double s2 = s1 * value;
                     double s3 = Math.floor(s2 / 100);
                     double s4 = s3 + s1;
-                    updatedInvestment.add(s4);
+                    updatedInvestment.addToInvestment(s4);
                     total += s4;
                 } else {
                     double a1 = temp * value;
                     double a2 = Math.floor(a1 / 100);
                     double a3 = a2 + temp;
-                    updatedInvestment.add(a3);
+                    updatedInvestment.addToInvestment(a3);
                     total += a3;
                 }
             }
         }
-        updatedInvestment.add(total);
+        updatedInvestment.addToInvestment(total);
         portfolio.addToPortfolio(count, updatedInvestment);
 
         count++;
@@ -113,7 +114,7 @@ public class Main {
         return count;
     }
 
-    public static int allocateMoney(Portfolio portfolio, List<Double> investment, int count,
+    public static int allocateMoney(Portfolio portfolio, Investment investment, int count,
                                     String[] instructions) {
         double total;
         double temp;
@@ -122,9 +123,9 @@ public class Main {
         for (int i = 1; i < instructions.length; i++) {
             temp = Double.parseDouble(instructions[i]);
             total += temp;
-            investment.add(temp);
+            investment.addToInvestment(temp);
         }
-        investment.add(total);
+        investment.addToInvestment(total);
 
         portfolio.addToPortfolio(count, investment);
 
@@ -134,30 +135,30 @@ public class Main {
         return count;
     }
 
-    public static void calculatePercent(List<Double> investment, double total) {
-        for (int i = 0; i < investment.size()-1; i++) {
-            portfolioPercent[i] = investment.get(i) / total;
+    public static void calculatePercent(Investment investment, double total) {
+        for (int i = 0; i < investment.getInvestmentCount()-1; i++) {
+            portfolioPercent[i] = investment.getInvestment(i) / total;
         }
     }
 
-    public static void printRebalance(Portfolio portfolio, List<Double> updatedInvestment, int count) {
+    public static void printRebalance(Portfolio portfolio, Investment updatedInvestment, int count) {
         double total;
-        List<Double> listValues;
+        Investment listValues;
         Double printValue;
         StringBuilder sb = new StringBuilder();
 
         listValues = portfolio.getInvestmentByMonth(count - 1);
 
-        total = listValues.get(listValues.size() - 1);
+        total = listValues.getInvestment(listValues.getInvestmentCount() - 1);
 
         for (double d : portfolioPercent) {
-            updatedInvestment.add(d * total);
+            updatedInvestment.addToInvestment(d * total);
             printValue = d * total;
             sb.append(printValue.shortValue());
             sb.append(" ");
         }
 
-        updatedInvestment.add(total);
+        updatedInvestment.addToInvestment(total);
 
         portfolio.addToPortfolio(count - 1, updatedInvestment);
 
@@ -165,11 +166,11 @@ public class Main {
     }
 
     public static String printBalance(Portfolio portfolio, int index) {
-        List<Double> monthlyValues = portfolio.getInvestmentByMonth(index + 1);
+        Investment monthlyValues = portfolio.getInvestmentByMonth(index + 1);
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < monthlyValues.size() - 1; i++) {
-            sb.append(monthlyValues.get(i).shortValue());
+        for (int i = 0; i < monthlyValues.getInvestmentCount() - 1; i++) {
+            sb.append(monthlyValues.getInvestment(i).shortValue());
             sb.append(" ");
         }
         System.out.println(sb);
