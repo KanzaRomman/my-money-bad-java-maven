@@ -68,6 +68,34 @@ public class Main {
         }
     }
 
+    public static void allocateFundsAndUpdatePortfolio(
+            Portfolio portfolio,
+            Investment investment,
+            String[] funds
+    ) {
+
+        allocateFunds(investment, funds);
+        updatePortfolio(portfolio, investment, count);
+
+        count++;
+    }
+
+    private static void allocateFunds(Investment investment, String[] funds) {
+
+        for (String fund : funds) {
+            investment.addToInvestment(
+                    Double.parseDouble(fund)
+            );
+        }
+
+        investment.setTotalInvestment();
+    }
+
+    private static void updatePortfolio(Portfolio portfolio, Investment investment, int count) {
+        portfolio.addToPortfolio(count, investment);
+        portfolio.setAllocatedPercentage();
+    }
+
     public static void changeGains(Portfolio portfolio, String[] instructions) {
         Pattern p = Pattern.compile("^-?\\d+\\.?\\d+");
         Investment listValues = portfolio.getInvestmentByMonth(count - 1);
@@ -105,32 +133,16 @@ public class Main {
         count++;
     }
 
-    public static void allocateFundsAndUpdatePortfolio(
-            Portfolio portfolio,
-            Investment investment,
-            String[] funds
-    ) {
+    public static String printBalance(Portfolio portfolio, int index) {
+        Investment monthlyValues = portfolio.getInvestmentByMonth(index + 1);
+        StringBuilder sb = new StringBuilder();
 
-        allocateFunds(investment, funds);
-        updatePortfolio(portfolio, investment, count);
-
-        count++;
-    }
-
-    private static void allocateFunds(Investment investment, String[] funds) {
-
-        for (String fund : funds) {
-            investment.addToInvestment(
-                    Double.parseDouble(fund)
-            );
+        for (int i = 0; i < monthlyValues.getInvestmentCount() - 1; i++) {
+            sb.append(monthlyValues.getInvestment(i).shortValue());
+            sb.append(" ");
         }
-
-        investment.setTotalInvestment();
-    }
-
-    private static void updatePortfolio(Portfolio portfolio, Investment investment, int count) {
-        portfolio.addToPortfolio(count, investment);
-        portfolio.setAllocatedPercentage();
+        System.out.println(sb);
+        return sb.toString();
     }
 
     public static void printRebalance(Portfolio portfolio, Investment updatedInvestment) {
@@ -157,15 +169,4 @@ public class Main {
         System.out.println(sb);
     }
 
-    public static String printBalance(Portfolio portfolio, int index) {
-        Investment monthlyValues = portfolio.getInvestmentByMonth(index + 1);
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < monthlyValues.getInvestmentCount() - 1; i++) {
-            sb.append(monthlyValues.getInvestment(i).shortValue());
-            sb.append(" ");
-        }
-        System.out.println(sb);
-        return sb.toString();
-    }
 }
