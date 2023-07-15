@@ -108,28 +108,35 @@ public class Main {
     }
 
     public static void updateInvestmentAsPerMarketChange(Portfolio portfolio, String[] marketChangeValueInstruction) {
-        Investment latestInvestment = portfolio.getLatestInvestment();
         List<Double> marketChangeValues = extractNumericValuesFromInstruction(marketChangeValueInstruction);
         Investment investmentAfterMarketChange = new Investment();
 
         for (int i = 0; i < marketChangeValues.size(); i++) {
 
-                double latestInvestmentValue = latestInvestment.getInvestmentValue(i);
-                double marketChangeValue = marketChangeValues.get(i);
+            double latestInvestmentValue = getLatestInvestmentValue(portfolio, i);
+            double marketChangeValue = marketChangeValues.get(i);
 
-                if (portfolio.isFirstOperation()) {
-                    double investmentValueAfterMarketChange = computeInvestmentValueAfterMarketChange(latestInvestmentValue, marketChangeValue);
-                    investmentAfterMarketChange.addToInvestment(investmentValueAfterMarketChange);
-                } else {
-                    latestInvestmentValue = latestInvestmentValue + portfolio.getSystematicInvestmentPlanAmount(i);
-                    double investmentValueAfterMarketChange = computeInvestmentValueAfterMarketChange(latestInvestmentValue, marketChangeValue);
-                    investmentAfterMarketChange.addToInvestment(investmentValueAfterMarketChange);
-                }
+            double investmentValueAfterMarketChange = computeInvestmentValueAfterMarketChange(latestInvestmentValue, marketChangeValue);
+            investmentAfterMarketChange.addToInvestment(investmentValueAfterMarketChange);
         }
         investmentAfterMarketChange.setTotalInvestment();
         portfolio.addToPortfolio(investmentAfterMarketChange);
 
         portfolio.recordOperation();
+    }
+
+    public static double getLatestInvestmentValue(Portfolio portfolio, int index) {
+        Investment latestInvestment = portfolio.getLatestInvestment();
+        double latestInvestmentValue;
+
+        if (portfolio.isFirstOperation()) {
+            latestInvestmentValue = latestInvestment.getInvestmentValue(index);
+        } else {
+            latestInvestmentValue = latestInvestment.getInvestmentValue(index) +
+                    portfolio.getSystematicInvestmentPlanAmount(index);
+        }
+
+        return latestInvestmentValue;
     }
 
     public static double computeInvestmentValueAfterMarketChange(Double latestInvestmentValue, Double marketChangeValue) {
