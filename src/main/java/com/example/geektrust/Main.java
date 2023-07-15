@@ -50,7 +50,7 @@ public class Main {
                         addSipToPortfolio(portfolio, instruction);
                         break;
                     case CHANGE:
-                        updateInvestmentAsPerMarketChange(portfolio, instruction);
+                        updateInvestmentAndPortfolioAsPerMarketChange(portfolio, instruction);
                         break;
                     case BALANCE:
                         printBalance(portfolio, instruction);
@@ -83,12 +83,9 @@ public class Main {
             Investment investment,
             String[] instruction
     ) {
-
         String[] funds = getValuesFromInstruction(instruction);
         allocateFunds(investment, funds);
-        updatePortfolio(portfolio, investment);
-
-        portfolio.recordOperation();
+        updatePortfolioAndSetAllocatedPercentage(portfolio, investment);
     }
 
     private static void allocateFunds(Investment investment, String[] funds) {
@@ -102,27 +99,33 @@ public class Main {
         investment.setTotalInvestment();
     }
 
-    private static void updatePortfolio(Portfolio portfolio, Investment investment) {
-        portfolio.addToPortfolio(investment);
+    private static void updatePortfolioAndSetAllocatedPercentage(Portfolio portfolio, Investment investment) {
+        addToPortfolioAndRecordOperation(portfolio, investment);
         portfolio.setAllocatedPercentage();
     }
 
-    public static void updateInvestmentAsPerMarketChange(Portfolio portfolio, String[] marketChangeValueInstruction) {
+    public static void updateInvestmentAndPortfolioAsPerMarketChange(Portfolio portfolio, String[] marketChangeValueInstruction) {
         List<Double> marketChangeValues = extractNumericValuesFromInstruction(marketChangeValueInstruction);
         Investment investmentAfterMarketChange = new Investment();
 
-        for (int i = 0; i < marketChangeValues.size(); i++) {
+        updateInvestmentAfterMarketChange(portfolio, marketChangeValues, investmentAfterMarketChange);
+        addToPortfolioAndRecordOperation(portfolio, investmentAfterMarketChange);
+    }
 
+    private static void updateInvestmentAfterMarketChange(Portfolio portfolio, List<Double> marketChangeValues, Investment investmentAfterMarketChange) {
+
+        for (int i = 0; i < marketChangeValues.size(); i++) {
             double latestInvestmentValue = getLatestInvestmentValue(portfolio, i);
             double marketChangeValue = marketChangeValues.get(i);
 
-            double investmentValueAfterMarketChange = computeInvestmentValueAfterMarketChange(latestInvestmentValue, marketChangeValue);
+            double investmentValueAfterMarketChange = computeInvestmentValueAfterMarketChange(
+                    latestInvestmentValue,
+                    marketChangeValue
+            );
             investmentAfterMarketChange.addToInvestment(investmentValueAfterMarketChange);
         }
-        investmentAfterMarketChange.setTotalInvestment();
-        portfolio.addToPortfolio(investmentAfterMarketChange);
 
-        portfolio.recordOperation();
+        investmentAfterMarketChange.setTotalInvestment();
     }
 
     public static double getLatestInvestmentValue(Portfolio portfolio, int index) {
@@ -142,6 +145,11 @@ public class Main {
     public static double computeInvestmentValueAfterMarketChange(Double latestInvestmentValue, Double marketChangeValue) {
         double percentChangeInInvestment = computeFlooredPercentage(latestInvestmentValue, marketChangeValue);
         return percentChangeInInvestment + latestInvestmentValue;
+    }
+
+    private static void addToPortfolioAndRecordOperation(Portfolio portfolio, Investment investmentAfterMarketChange) {
+        portfolio.addToPortfolio(investmentAfterMarketChange);
+        portfolio.recordOperation();
     }
 
     public static String printBalance(Portfolio portfolio, String[] instruction) {
