@@ -43,11 +43,11 @@ public class FileInstructionHelper {
         return Arrays.copyOfRange(instruction, VALUES_INITIAL_INDEX, instruction.length);
     }
 
-    public static List<Double> extractNumericValuesFromInstructions(String[] instructions) {
+    public static List<Double> extractNumericValuesFromInstruction(String[] instruction) {
         Pattern numericValuesPattern = Pattern.compile(NUMERIC_VALUE_REGEX);
         List<Double> extractedNumericValues = new ArrayList<>();
 
-        for(String value: instructions) {
+        for(String value: instruction) {
             Matcher valueMatcher = numericValuesPattern.matcher(value);
             if (valueMatcher.find()) {
                 Double numericValue = Double.parseDouble(valueMatcher.group());

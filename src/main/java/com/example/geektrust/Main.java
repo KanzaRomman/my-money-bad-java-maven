@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static com.example.geektrust.helpers.FileInstructionHelper.extractCommandFromInstruction;
-import static com.example.geektrust.helpers.FileInstructionHelper.extractNumericValuesFromInstructions;
+import static com.example.geektrust.helpers.FileInstructionHelper.extractNumericValuesFromInstruction;
 import static com.example.geektrust.helpers.FileInstructionHelper.getInstructionFromFileLine;
 import static com.example.geektrust.helpers.FileInstructionHelper.getTrimmedLinesAsList;
 import static com.example.geektrust.helpers.FileInstructionHelper.getValuesFromInstruction;
@@ -50,7 +50,7 @@ public class Main {
                         addSipToPortfolio(portfolio, instruction);
                         break;
                     case CHANGE:
-                        changeGains(portfolio, instruction);
+                        updateInvestmentAsPerMarketChange(portfolio, instruction);
                         break;
                     case BALANCE:
                         printBalance(portfolio, instruction);
@@ -107,12 +107,12 @@ public class Main {
         portfolio.setAllocatedPercentage();
     }
 
-    public static void changeGains(Portfolio portfolio, String[] instructions) {
+    public static void updateInvestmentAsPerMarketChange(Portfolio portfolio, String[] marketChangeValueInstruction) {
         Investment latestInvestment = portfolio.getInvestmentByMonth(count - 1);
 
         Investment investmentAfterMarketChange = new Investment();
 
-        List<Double> marketChangeValues = extractNumericValuesFromInstructions(instructions);
+        List<Double> marketChangeValues = extractNumericValuesFromInstruction(marketChangeValueInstruction);
 
         for (int i = 0; i < marketChangeValues.size(); i++) {
 
