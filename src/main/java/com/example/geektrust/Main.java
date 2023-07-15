@@ -117,7 +117,7 @@ public class Main {
 
         for (int i = 0; i < marketChangeValues.size(); i++) {
 
-                double temp = latestInvestment.getInvestment(i);
+                double temp = latestInvestment.getInvestmentValue(i);
 
                 if (count - 1 > 0) {
                     double s1 = temp + portfolio.getSystematicInvestmentPlanAmount(i);
@@ -146,7 +146,7 @@ public class Main {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < monthlyValues.getInvestmentCount() - 1; i++) {
-            sb.append(monthlyValues.getInvestment(i).shortValue());
+            sb.append(monthlyValues.getInvestmentValue(i).shortValue());
             sb.append(" ");
         }
         System.out.println(sb);
@@ -161,7 +161,7 @@ public class Main {
 
         listValues = portfolio.getInvestmentByMonth(count - 1);
 
-        total = listValues.getInvestment(listValues.getInvestmentCount() - 1);
+        total = listValues.getInvestmentValue(listValues.getInvestmentCount() - 1);
 
         for (double d : portfolio.getAllocatedPercentage()) {
             updatedInvestment.addToInvestment(d * total);

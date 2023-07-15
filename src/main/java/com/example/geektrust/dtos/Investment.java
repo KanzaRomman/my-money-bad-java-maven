@@ -15,7 +15,7 @@ public class Investment {
         investments.add(fund);
     }
 
-    public Double getInvestment(int index) {
+    public Double getInvestmentValue(int index) {
         return investments.get(index);
     }
 
@@ -32,6 +32,6 @@ public class Investment {
     }
 
     public double getInvestmentPercentage(int index) {
-        return this.getInvestment(index) / this.getTotalInvestment();
+        return this.getInvestmentValue(index) / this.getTotalInvestment();
     }
 }
