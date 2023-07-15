@@ -108,10 +108,8 @@ public class Main {
 
     public static void updateInvestmentAsPerMarketChange(Portfolio portfolio, String[] marketChangeValueInstruction) {
         Investment latestInvestment = portfolio.getLatestInvestment();
-
-        Investment investmentAfterMarketChange = new Investment();
-
         List<Double> marketChangeValues = extractNumericValuesFromInstruction(marketChangeValueInstruction);
+        Investment investmentAfterMarketChange = new Investment();
 
         for (int i = 0; i < marketChangeValues.size(); i++) {
 
