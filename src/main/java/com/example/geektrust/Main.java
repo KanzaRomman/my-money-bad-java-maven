@@ -107,9 +107,9 @@ public class Main {
     }
 
     public static void changeGains(Portfolio portfolio, String[] instructions) {
-        Investment listValues = portfolio.getInvestmentByMonth(count - 1);
+        Investment latestInvestment = portfolio.getInvestmentByMonth(count - 1);
 
-        Investment updatedInvestment = new Investment();
+        Investment investmentAfterMarketChange = new Investment();
 
         List<Double> marketChangeValues = extractNumericValuesFromInstructions(instructions);
 
@@ -117,25 +117,25 @@ public class Main {
 
         for (int i = 0; i < marketChangeValues.size(); i++) {
 
-                double temp = listValues.getInvestment(i);
+                double temp = latestInvestment.getInvestment(i);
 
                 if (count - 1 > 0) {
                     double s1 = temp + portfolio.getSystematicInvestmentPlanAmount(i);
                     double s2 = s1 * marketChangeValues.get(i);
                     double s3 = Math.floor(s2 / 100);
                     double s4 = s3 + s1;
-                    updatedInvestment.addToInvestment(s4);
+                    investmentAfterMarketChange.addToInvestment(s4);
                     total += s4;
                 } else {
                     double a1 = temp * marketChangeValues.get(i);
                     double a2 = Math.floor(a1 / 100);
                     double a3 = a2 + temp;
-                    updatedInvestment.addToInvestment(a3);
+                    investmentAfterMarketChange.addToInvestment(a3);
                     total += a3;
                 }
         }
-        updatedInvestment.addToInvestment(total);
-        portfolio.addToPortfolio(count, updatedInvestment);
+        investmentAfterMarketChange.addToInvestment(total);
+        portfolio.addToPortfolio(count, investmentAfterMarketChange);
 
         count++;
     }
