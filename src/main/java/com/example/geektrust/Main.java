@@ -29,7 +29,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Path filePath = new File(args[0]).toPath();
+//        Path filePath = new File(args[0]).toPath();
+        Path filePath = new File("sample_input/input1.txt").toPath();
         try (Stream<String> rawFileLines = readLinesFromFile(filePath)) {
             List<String> fileLines = getTrimmedLinesAsList(rawFileLines);
 
@@ -113,8 +114,6 @@ public class Main {
 
         List<Double> marketChangeValues = extractNumericValuesFromInstructions(instructions);
 
-        double total = 0;
-
         for (int i = 0; i < marketChangeValues.size(); i++) {
 
                 double temp = latestInvestment.getInvestmentValue(i);
@@ -125,16 +124,14 @@ public class Main {
                     double s3 = Math.floor(s2 / 100);
                     double s4 = s3 + s1;
                     investmentAfterMarketChange.addToInvestment(s4);
-                    total += s4;
                 } else {
                     double a1 = temp * marketChangeValues.get(i);
                     double a2 = Math.floor(a1 / 100);
                     double a3 = a2 + temp;
                     investmentAfterMarketChange.addToInvestment(a3);
-                    total += a3;
                 }
         }
-        investmentAfterMarketChange.addToInvestment(total);
+        investmentAfterMarketChange.setTotalInvestment();
         portfolio.addToPortfolio(count, investmentAfterMarketChange);
 
         count++;
@@ -145,7 +142,7 @@ public class Main {
         Investment monthlyValues = portfolio.getInvestmentByMonth(index + 1);
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < monthlyValues.getInvestmentCount() - 1; i++) {
+        for (int i = 0; i < monthlyValues.getInvestmentCount(); i++) {
             sb.append(monthlyValues.getInvestmentValue(i).shortValue());
             sb.append(" ");
         }
@@ -161,16 +158,14 @@ public class Main {
 
         listValues = portfolio.getInvestmentByMonth(count - 1);
 
-        total = listValues.getInvestmentValue(listValues.getInvestmentCount() - 1);
-
         for (double d : portfolio.getAllocatedPercentage()) {
-            updatedInvestment.addToInvestment(d * total);
-            printValue = d * total;
+            updatedInvestment.addToInvestment(d * listValues.getTotalInvestment());
+            printValue = d * listValues.getTotalInvestment();
             sb.append(printValue.shortValue());
             sb.append(" ");
         }
 
-        updatedInvestment.addToInvestment(total);
+        updatedInvestment.setTotalInvestment();
 
         portfolio.addToPortfolio(count - 1, updatedInvestment);
 
