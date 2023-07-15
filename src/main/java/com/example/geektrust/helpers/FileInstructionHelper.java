@@ -5,8 +5,11 @@ import com.example.geektrust.Main.Command;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,6 +17,7 @@ public class FileInstructionHelper {
 
     public static final int COMMAND_INDEX = 0;
     public static final int VALUES_INITIAL_INDEX = 1;
+    public static final String NUMERIC_VALUE_REGEX = "^-?\\d+\\.?\\d+";
 
     private FileInstructionHelper() {
         throw new IllegalStateException("Helper Class");
@@ -37,6 +41,21 @@ public class FileInstructionHelper {
 
     public static String[] getValuesFromInstruction(String[] instruction) {
         return Arrays.copyOfRange(instruction, VALUES_INITIAL_INDEX, instruction.length);
+    }
+
+    public static List<Double> extractNumericValuesFromInstructions(String[] instructions) {
+        Pattern numericValuesPattern = Pattern.compile(NUMERIC_VALUE_REGEX);
+        List<Double> extractedNumericValues = new ArrayList<>();
+
+        for(String value: instructions) {
+            Matcher valueMatcher = numericValuesPattern.matcher(value);
+            if (valueMatcher.find()) {
+                Double numericValue = Double.parseDouble(valueMatcher.group());
+                extractedNumericValues.add(numericValue);
+            }
+        }
+
+        return extractedNumericValues;
     }
 
 }

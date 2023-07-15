@@ -7,11 +7,10 @@ import com.example.geektrust.enums.Month;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.example.geektrust.helpers.FileInstructionHelper.extractCommandFromInstruction;
+import static com.example.geektrust.helpers.FileInstructionHelper.extractNumericValuesFromInstructions;
 import static com.example.geektrust.helpers.FileInstructionHelper.getInstructionFromFileLine;
 import static com.example.geektrust.helpers.FileInstructionHelper.getTrimmedLinesAsList;
 import static com.example.geektrust.helpers.FileInstructionHelper.getValuesFromInstruction;
@@ -108,35 +107,32 @@ public class Main {
     }
 
     public static void changeGains(Portfolio portfolio, String[] instructions) {
-        Pattern p = Pattern.compile("^-?\\d+\\.?\\d+");
         Investment listValues = portfolio.getInvestmentByMonth(count - 1);
 
         Investment updatedInvestment = new Investment();
 
+        List<Double> marketChangeValues = extractNumericValuesFromInstructions(instructions);
+
         double total = 0;
 
-        for (int i = 1; i < instructions.length - 1; i++) {
-            Matcher m = p.matcher(instructions[i]);
-            if (m.find()) {
-                double value = Double.parseDouble(m.group());
+        for (int i = 0; i < marketChangeValues.size(); i++) {
 
-                double temp = listValues.getInvestment(i - 1);
+                double temp = listValues.getInvestment(i);
 
                 if (count - 1 > 0) {
-                    double s1 = temp + portfolio.getSystematicInvestmentPlanAmount(i - 1);
-                    double s2 = s1 * value;
+                    double s1 = temp + portfolio.getSystematicInvestmentPlanAmount(i);
+                    double s2 = s1 * marketChangeValues.get(i);
                     double s3 = Math.floor(s2 / 100);
                     double s4 = s3 + s1;
                     updatedInvestment.addToInvestment(s4);
                     total += s4;
                 } else {
-                    double a1 = temp * value;
+                    double a1 = temp * marketChangeValues.get(i);
                     double a2 = Math.floor(a1 / 100);
                     double a3 = a2 + temp;
                     updatedInvestment.addToInvestment(a3);
                     total += a3;
                 }
-            }
         }
         updatedInvestment.addToInvestment(total);
         portfolio.addToPortfolio(count, updatedInvestment);
