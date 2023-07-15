@@ -107,7 +107,7 @@ public class Main {
     }
 
     public static void updateInvestmentAsPerMarketChange(Portfolio portfolio, String[] marketChangeValueInstruction) {
-        Investment latestInvestment = portfolio.getInvestmentByMonth(portfolio.getOperationCount() - 1);
+        Investment latestInvestment = portfolio.getLatestInvestment();
 
         Investment investmentAfterMarketChange = new Investment();
 

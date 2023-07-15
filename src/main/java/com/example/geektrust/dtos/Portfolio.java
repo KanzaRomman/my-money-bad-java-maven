@@ -26,6 +26,11 @@ public class Portfolio {
         return portfolios.get(month);
     }
 
+    public Investment getLatestInvestment() {
+        int latestInvestmentOffset = operationCount - 1;
+        return portfolios.get(latestInvestmentOffset);
+    }
+
     public int getPortfolioSize() {
         return portfolios.size();
     }
