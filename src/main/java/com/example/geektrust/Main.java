@@ -17,7 +17,6 @@ import static com.example.geektrust.helpers.FileInstructionHelper.getValuesFromI
 import static com.example.geektrust.helpers.FileInstructionHelper.readLinesFromFile;
 
 public class Main {
-    static int count = 0;
 
     public enum Command  {
         ALLOCATE,
@@ -86,9 +85,9 @@ public class Main {
 
         String[] funds = getValuesFromInstruction(instruction);
         allocateFunds(investment, funds);
-        updatePortfolio(portfolio, investment, count);
+        updatePortfolio(portfolio, investment);
 
-        count++;
+        portfolio.recordOperation();
     }
 
     private static void allocateFunds(Investment investment, String[] funds) {
@@ -102,13 +101,13 @@ public class Main {
         investment.setTotalInvestment();
     }
 
-    private static void updatePortfolio(Portfolio portfolio, Investment investment, int count) {
-        portfolio.addToPortfolio(count, investment);
+    private static void updatePortfolio(Portfolio portfolio, Investment investment) {
+        portfolio.addToPortfolio(investment);
         portfolio.setAllocatedPercentage();
     }
 
     public static void updateInvestmentAsPerMarketChange(Portfolio portfolio, String[] marketChangeValueInstruction) {
-        Investment latestInvestment = portfolio.getInvestmentByMonth(count - 1);
+        Investment latestInvestment = portfolio.getInvestmentByMonth(portfolio.getOperationCount() - 1);
 
         Investment investmentAfterMarketChange = new Investment();
 
@@ -118,7 +117,7 @@ public class Main {
 
                 double temp = latestInvestment.getInvestmentValue(i);
 
-                if (count - 1 > 0) {
+                if (portfolio.getOperationCount() - 1 > 0) {
                     double s1 = temp + portfolio.getSystematicInvestmentPlanAmount(i);
                     double s2 = s1 * marketChangeValues.get(i);
                     double s3 = Math.floor(s2 / 100);
@@ -132,9 +131,9 @@ public class Main {
                 }
         }
         investmentAfterMarketChange.setTotalInvestment();
-        portfolio.addToPortfolio(count, investmentAfterMarketChange);
+        portfolio.addToPortfolio(investmentAfterMarketChange);
 
-        count++;
+        portfolio.recordOperation();
     }
 
     public static String printBalance(Portfolio portfolio, String[] instruction) {
@@ -156,7 +155,7 @@ public class Main {
         Double printValue;
         StringBuilder sb = new StringBuilder();
 
-        listValues = portfolio.getInvestmentByMonth(count - 1);
+        listValues = portfolio.getInvestmentByMonth(portfolio.getOperationCount() - 1);
 
         for (double d : portfolio.getAllocatedPercentage()) {
             updatedInvestment.addToInvestment(d * listValues.getTotalInvestment());
@@ -167,7 +166,7 @@ public class Main {
 
         updatedInvestment.setTotalInvestment();
 
-        portfolio.addToPortfolio(count - 1, updatedInvestment);
+        portfolio.addToPortfolio(updatedInvestment);
 
         System.out.println(sb);
     }
