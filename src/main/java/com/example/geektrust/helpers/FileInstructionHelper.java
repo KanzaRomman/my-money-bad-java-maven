@@ -12,6 +12,9 @@ import java.util.stream.Stream;
 
 public class FileInstructionHelper {
 
+    public static final int COMMAND_INDEX = 0;
+    public static final int VALUES_INITIAL_INDEX = 1;
+
     private FileInstructionHelper() {
         throw new IllegalStateException("Helper Class");
     }
@@ -29,11 +32,11 @@ public class FileInstructionHelper {
     }
 
     public static Command extractCommandFromInstruction(String[] instruction) {
-        return Command.valueOf(instruction[0]);
+        return Command.valueOf(instruction[COMMAND_INDEX]);
     }
 
     public static String[] getValuesFromInstruction(String[] instruction) {
-        return Arrays.copyOfRange(instruction, 1, instruction.length);
+        return Arrays.copyOfRange(instruction, VALUES_INITIAL_INDEX, instruction.length);
     }
 
 }
