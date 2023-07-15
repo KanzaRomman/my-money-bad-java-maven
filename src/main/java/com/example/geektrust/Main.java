@@ -15,6 +15,7 @@ import static com.example.geektrust.helpers.FileInstructionHelper.getInstruction
 import static com.example.geektrust.helpers.FileInstructionHelper.getTrimmedLinesAsList;
 import static com.example.geektrust.helpers.FileInstructionHelper.getValuesFromInstruction;
 import static com.example.geektrust.helpers.FileInstructionHelper.readLinesFromFile;
+import static com.example.geektrust.helpers.MathHelper.computeFlooredPercentage;
 
 public class Main {
 
@@ -113,25 +114,27 @@ public class Main {
 
         for (int i = 0; i < marketChangeValues.size(); i++) {
 
-                double temp = latestInvestment.getInvestmentValue(i);
+                double latestInvestmentValue = latestInvestment.getInvestmentValue(i);
+                double marketChangeValue = marketChangeValues.get(i);
 
                 if (portfolio.isFirstOperation()) {
-                    double a1 = temp * marketChangeValues.get(i);
-                    double a2 = Math.floor(a1 / 100);
-                    double a3 = a2 + temp;
-                    investmentAfterMarketChange.addToInvestment(a3);
+                    double investmentValueAfterMarketChange = computeInvestmentValueAfterMarketChange(latestInvestmentValue, marketChangeValue);
+                    investmentAfterMarketChange.addToInvestment(investmentValueAfterMarketChange);
                 } else {
-                    double s1 = temp + portfolio.getSystematicInvestmentPlanAmount(i);
-                    double s2 = s1 * marketChangeValues.get(i);
-                    double s3 = Math.floor(s2 / 100);
-                    double s4 = s3 + s1;
-                    investmentAfterMarketChange.addToInvestment(s4);
+                    latestInvestmentValue = latestInvestmentValue + portfolio.getSystematicInvestmentPlanAmount(i);
+                    double investmentValueAfterMarketChange = computeInvestmentValueAfterMarketChange(latestInvestmentValue, marketChangeValue);
+                    investmentAfterMarketChange.addToInvestment(investmentValueAfterMarketChange);
                 }
         }
         investmentAfterMarketChange.setTotalInvestment();
         portfolio.addToPortfolio(investmentAfterMarketChange);
 
         portfolio.recordOperation();
+    }
+
+    public static double computeInvestmentValueAfterMarketChange(Double latestInvestmentValue, Double marketChangeValue) {
+        double percentChangeInInvestment = computeFlooredPercentage(latestInvestmentValue, marketChangeValue);
+        return percentChangeInInvestment + latestInvestmentValue;
     }
 
     public static String printBalance(Portfolio portfolio, String[] instruction) {
