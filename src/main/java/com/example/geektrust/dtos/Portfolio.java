@@ -62,4 +62,8 @@ public class Portfolio {
     public Integer getOperationCount() {
         return operationCount;
     }
+
+    public boolean isFirstOperation() {
+        return getOperationCount() == 1;
+    }
 }

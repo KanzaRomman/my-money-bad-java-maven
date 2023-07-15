@@ -115,17 +115,17 @@ public class Main {
 
                 double temp = latestInvestment.getInvestmentValue(i);
 
-                if (portfolio.getOperationCount() - 1 > 0) {
+                if (portfolio.isFirstOperation()) {
+                    double a1 = temp * marketChangeValues.get(i);
+                    double a2 = Math.floor(a1 / 100);
+                    double a3 = a2 + temp;
+                    investmentAfterMarketChange.addToInvestment(a3);
+                } else {
                     double s1 = temp + portfolio.getSystematicInvestmentPlanAmount(i);
                     double s2 = s1 * marketChangeValues.get(i);
                     double s3 = Math.floor(s2 / 100);
                     double s4 = s3 + s1;
                     investmentAfterMarketChange.addToInvestment(s4);
-                } else {
-                    double a1 = temp * marketChangeValues.get(i);
-                    double a2 = Math.floor(a1 / 100);
-                    double a3 = a2 + temp;
-                    investmentAfterMarketChange.addToInvestment(a3);
                 }
         }
         investmentAfterMarketChange.setTotalInvestment();
