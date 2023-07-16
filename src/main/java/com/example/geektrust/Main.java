@@ -29,8 +29,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-//        Path filePath = new File(args[0]).toPath();
-        Path filePath = new File("sample_input/input1.txt").toPath();
+        Path filePath = new File(args[0]).toPath();
         try (Stream<String> rawFileLines = readLinesFromFile(filePath)) {
             List<String> fileLines = getTrimmedLinesAsList(rawFileLines);
 
