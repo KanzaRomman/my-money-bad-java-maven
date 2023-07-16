@@ -55,12 +55,7 @@ public class Main {
                         displayBalance(portfolio, instructionValues);
                         break;
                     case REBALANCE:
-                        int size = portfolio.getPortfolioSize() - 1;
-                        if (size % 6 == 0) {
-                            printRebalance(portfolio, updatedInvestment);
-                        } else {
-                            System.out.println("CANNOT_REBALANCE");
-                        }
+                        rebalancePortfolioAndDisplayBalance(portfolio, updatedInvestment);
                         break;
 
                 }
@@ -203,26 +198,34 @@ public class Main {
         return stringBuilder.toString();
     }
 
-    public static void printRebalance(Portfolio portfolio, Investment updatedInvestment) {
-        double total;
-        Investment listValues;
-        Double printValue;
-        StringBuilder sb = new StringBuilder();
+    public static void rebalancePortfolioAndDisplayBalance(
+            Portfolio portfolio,
+            Investment updatedInvestment
+    ) {
+        int size = portfolio.getPortfolioSize() - 1;
+        if (size % 6 == 0) {
+            double total;
+            Investment listValues;
+            Double printValue;
+            StringBuilder sb = new StringBuilder();
 
-        listValues = portfolio.getInvestmentByMonth(portfolio.getOperationCount() - 1);
+            listValues = portfolio.getInvestmentByMonth(portfolio.getOperationCount() - 1);
 
-        for (double d : portfolio.getAllocatedPercentage()) {
-            updatedInvestment.addToInvestment(d * listValues.getTotalInvestment());
-            printValue = d * listValues.getTotalInvestment();
-            sb.append(printValue.shortValue());
-            sb.append(" ");
+            for (double d : portfolio.getAllocatedPercentage()) {
+                updatedInvestment.addToInvestment(d * listValues.getTotalInvestment());
+                printValue = d * listValues.getTotalInvestment();
+                sb.append(printValue.shortValue());
+                sb.append(" ");
+            }
+
+            updatedInvestment.setTotalInvestment();
+
+            portfolio.addToPortfolio(updatedInvestment);
+
+            System.out.println(sb);
+        } else {
+            System.out.println("CANNOT_REBALANCE");
         }
-
-        updatedInvestment.setTotalInvestment();
-
-        portfolio.addToPortfolio(updatedInvestment);
-
-        System.out.println(sb);
     }
 
 }
