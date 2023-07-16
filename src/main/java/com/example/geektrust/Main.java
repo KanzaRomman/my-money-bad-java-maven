@@ -55,15 +55,6 @@ public class Main {
         }
     }
 
-    private static void addSipToPortfolio(
-            Portfolio portfolio,
-            String[] amounts
-    ) {
-        for (String amount : amounts) {
-            portfolio.addToSystematicInvestmentPlan(Double.parseDouble(amount));
-        }
-    }
-
     public static void allocateFundsAndUpdatePortfolio(
             Portfolio portfolio,
             String[] funds
@@ -91,6 +82,15 @@ public class Main {
     ) {
         addToPortfolioAndRecordOperation(portfolio, investment);
         portfolio.setAllocatedPercentage();
+    }
+
+    private static void addSipToPortfolio(
+            Portfolio portfolio,
+            String[] amounts
+    ) {
+        for (String amount : amounts) {
+            portfolio.addToSystematicInvestmentPlan(Double.parseDouble(amount));
+        }
     }
 
     public static void updateInvestmentAndPortfolioAsPerMarketChange(
@@ -166,11 +166,6 @@ public class Main {
         displayBalance(investmentByMonth);
     }
 
-    private static void displayBalance(Investment investmentByMonth) {
-        String balanceString = buildBalanceString(investmentByMonth);
-        System.out.println(balanceString);
-    }
-
     public static int getMonthIndexFromBalancePrintingInstructionValues(String[] balancePrintingInstructionValues) {
         final int MONTH_NAME_INDEX = 0;
         final int OFFSET = 1;
@@ -178,6 +173,11 @@ public class Main {
         String monthName = balancePrintingInstructionValues[MONTH_NAME_INDEX];
         int monthNumber = Month.valueOf(monthName).getMonthNumber();
         return monthNumber - OFFSET;
+    }
+
+    private static void displayBalance(Investment investmentByMonth) {
+        String balanceString = buildBalanceString(investmentByMonth);
+        System.out.println(balanceString);
     }
 
     public static String buildBalanceString(Investment investment) {
@@ -200,19 +200,19 @@ public class Main {
         }
     }
 
+    public static boolean isRebalancePossible(Portfolio portfolio) {
+        final int OFFSET = 1;
+        final int REBALANCE_INTERVAL = 6;
+        final int ZERO = 0;
+
+        return (portfolio.getPortfolioSize() - OFFSET) % REBALANCE_INTERVAL == ZERO;
+    }
+
     private static void updatePortfolioAndDisplayBalanceAfterRebalance(Portfolio portfolio) {
         Investment updatedInvestment = new Investment();
         rebalancePortfolio(portfolio, updatedInvestment);
         setTotalInvestmentAndAddToPortfolio(portfolio, updatedInvestment);
         displayBalance(updatedInvestment);
-    }
-
-    private static void setTotalInvestmentAndAddToPortfolio(
-            Portfolio portfolio,
-            Investment updatedInvestment
-    ) {
-        updatedInvestment.setTotalInvestment();
-        portfolio.addToPortfolio(updatedInvestment);
     }
 
     private static void rebalancePortfolio(
@@ -228,12 +228,12 @@ public class Main {
         }
     }
 
-    public static boolean isRebalancePossible(Portfolio portfolio) {
-        final int OFFSET = 1;
-        final int REBALANCE_INTERVAL = 6;
-        final int ZERO = 0;
-
-        return (portfolio.getPortfolioSize() - OFFSET) % REBALANCE_INTERVAL == ZERO;
+    private static void setTotalInvestmentAndAddToPortfolio(
+            Portfolio portfolio,
+            Investment updatedInvestment
+    ) {
+        updatedInvestment.setTotalInvestment();
+        portfolio.addToPortfolio(updatedInvestment);
     }
 
     public enum Command {
