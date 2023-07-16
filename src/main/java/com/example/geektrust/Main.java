@@ -37,7 +37,7 @@ public class Main {
                         allocateFundsAndUpdatePortfolio(portfolio, instructionValues);
                         break;
                     case SIP:
-                        addSipToPortfolio(portfolio, instructionValues);
+                        portfolio.addSipToPortfolio(instructionValues);
                         break;
                     case CHANGE:
                         updateInvestmentAndPortfolioAsPerMarketChange(portfolio, instructionValues);
@@ -82,15 +82,6 @@ public class Main {
     ) {
         addToPortfolioAndRecordOperation(portfolio, investment);
         portfolio.setAllocatedPercentage();
-    }
-
-    private static void addSipToPortfolio(
-            Portfolio portfolio,
-            String[] amounts
-    ) {
-        for (String amount : amounts) {
-            portfolio.addToSystematicInvestmentPlan(Double.parseDouble(amount));
-        }
     }
 
     public static void updateInvestmentAndPortfolioAsPerMarketChange(

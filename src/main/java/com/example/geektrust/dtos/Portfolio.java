@@ -39,6 +39,14 @@ public class Portfolio {
         systematicInvestmentPlan.add(amount);
     }
 
+    public void addSipToPortfolio(
+            String[] amounts
+    ) {
+        for (String amount : amounts) {
+            addToSystematicInvestmentPlan(Double.parseDouble(amount));
+        }
+    }
+
     public Double getSystematicInvestmentPlanAmount(int index) {
         return systematicInvestmentPlan.get(index);
     }
