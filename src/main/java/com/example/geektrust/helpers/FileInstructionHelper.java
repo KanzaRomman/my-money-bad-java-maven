@@ -39,7 +39,7 @@ public class FileInstructionHelper {
         return Command.valueOf(instruction[COMMAND_INDEX]);
     }
 
-    public static String[] getValuesFromInstruction(String[] instruction) {
+    public static String[] extractValuesFromInstruction(String[] instruction) {
         return Arrays.copyOfRange(instruction, VALUES_INITIAL_INDEX, instruction.length);
     }
 
