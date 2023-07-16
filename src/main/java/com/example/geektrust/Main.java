@@ -177,17 +177,31 @@ public class Main {
             Portfolio portfolio,
             String[] balancePrintingInstructionValues
     ) {
-        int zerothIndex = 0;
-        String monthName = balancePrintingInstructionValues[zerothIndex];
-        int monthIndex = Month.valueOf(monthName).getMonthNumber() - 1;
+        int monthIndex = getMonthIndexFromBalancePrintingInstructionValues(balancePrintingInstructionValues);
         Investment investmentByMonth = portfolio.getInvestmentByMonth(monthIndex + 1);
-        StringBuilder sb = new StringBuilder();
+        String balanceString = buildBalanceString(investmentByMonth);
+        System.out.println(balanceString);
+    }
 
-        for (int i = 0; i < investmentByMonth.getInvestmentCount(); i++) {
-            sb.append(investmentByMonth.getInvestmentValue(i).shortValue());
-            sb.append(" ");
+    public static int getMonthIndexFromBalancePrintingInstructionValues(String[] balancePrintingInstructionValues) {
+        final int MONTH_NAME_INDEX = 0;
+        final int OFFSET = 1;
+
+        String monthName = balancePrintingInstructionValues[MONTH_NAME_INDEX];
+        int monthNumber = Month.valueOf(monthName).getMonthNumber();
+        return monthNumber - OFFSET;
+    }
+
+    public static String buildBalanceString(Investment investment) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String separator = " ";
+
+        for (int i = 0; i < investment.getInvestmentCount(); i++) {
+            stringBuilder.append(investment.getInvestmentValue(i).shortValue());
+            stringBuilder.append(separator);
         }
-        System.out.println(sb);
+
+        return stringBuilder.toString();
     }
 
     public static void printRebalance(Portfolio portfolio, Investment updatedInvestment) {
