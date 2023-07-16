@@ -153,17 +153,14 @@ public class Main {
             String[] balancePrintingInstructionValues
     ) {
         int monthIndex = getMonthIndexFromBalancePrintingInstructionValues(balancePrintingInstructionValues);
-        Investment investmentByMonth = portfolio.getInvestmentByMonth(monthIndex + 1);
+        Investment investmentByMonth = portfolio.getInvestmentByMonth(monthIndex);
         displayBalance(investmentByMonth);
     }
 
     public static int getMonthIndexFromBalancePrintingInstructionValues(String[] balancePrintingInstructionValues) {
         final int MONTH_NAME_INDEX = 0;
-        final int OFFSET = 1;
-
         String monthName = balancePrintingInstructionValues[MONTH_NAME_INDEX];
-        int monthNumber = Month.valueOf(monthName).getMonthNumber();
-        return monthNumber - OFFSET;
+        return Month.valueOf(monthName).getMonthNumber();
     }
 
     private static void displayBalance(Investment investmentByMonth) {
