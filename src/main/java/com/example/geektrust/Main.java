@@ -34,7 +34,6 @@ public class Main {
             List<String> fileLines = getTrimmedLinesAsList(rawFileLines);
 
             Portfolio portfolio = new Portfolio();
-            Investment updatedInvestment = new Investment();
 
             for (String fileLine : fileLines) {
                 String[] instruction = getInstructionFromFileLine(fileLine);
@@ -52,10 +51,10 @@ public class Main {
                         updateInvestmentAndPortfolioAsPerMarketChange(portfolio, instructionValues);
                         break;
                     case BALANCE:
-                        displayBalance(portfolio, instructionValues);
+                        displayBalanceByMonthFromBalancePrintingInstruction(portfolio, instructionValues);
                         break;
                     case REBALANCE:
-                        rebalancePortfolioAndDisplayBalance(portfolio, updatedInvestment);
+                        rebalancePortfolioAndDisplayBalance(portfolio);
                         break;
 
                 }
@@ -167,12 +166,16 @@ public class Main {
         portfolio.recordOperation();
     }
 
-    public static void displayBalance(
+    public static void displayBalanceByMonthFromBalancePrintingInstruction(
             Portfolio portfolio,
             String[] balancePrintingInstructionValues
     ) {
         int monthIndex = getMonthIndexFromBalancePrintingInstructionValues(balancePrintingInstructionValues);
         Investment investmentByMonth = portfolio.getInvestmentByMonth(monthIndex + 1);
+        displayBalance(investmentByMonth);
+    }
+
+    private static void displayBalance(Investment investmentByMonth) {
         String balanceString = buildBalanceString(investmentByMonth);
         System.out.println(balanceString);
     }
@@ -198,34 +201,48 @@ public class Main {
         return stringBuilder.toString();
     }
 
-    public static void rebalancePortfolioAndDisplayBalance(
-            Portfolio portfolio,
-            Investment updatedInvestment
-    ) {
-        int size = portfolio.getPortfolioSize() - 1;
-        if (size % 6 == 0) {
-            double total;
-            Investment listValues;
-            Double printValue;
-            StringBuilder sb = new StringBuilder();
-
-            listValues = portfolio.getInvestmentByMonth(portfolio.getOperationCount() - 1);
-
-            for (double d : portfolio.getAllocatedPercentage()) {
-                updatedInvestment.addToInvestment(d * listValues.getTotalInvestment());
-                printValue = d * listValues.getTotalInvestment();
-                sb.append(printValue.shortValue());
-                sb.append(" ");
-            }
-
-            updatedInvestment.setTotalInvestment();
-
-            portfolio.addToPortfolio(updatedInvestment);
-
-            System.out.println(sb);
+    public static void rebalancePortfolioAndDisplayBalance(Portfolio portfolio) {
+        if (isRebalancePossible(portfolio)) {
+            updatePortfolioAndDisplayBalanceAfterRebalance(portfolio);
         } else {
             System.out.println("CANNOT_REBALANCE");
         }
+    }
+
+    private static void updatePortfolioAndDisplayBalanceAfterRebalance(Portfolio portfolio) {
+        Investment updatedInvestment = new Investment();
+        rebalancePortfolio(portfolio, updatedInvestment);
+        setTotalInvestmentAndAddToPortfolio(portfolio, updatedInvestment);
+        displayBalance(updatedInvestment);
+    }
+
+    private static void setTotalInvestmentAndAddToPortfolio(
+            Portfolio portfolio,
+            Investment updatedInvestment
+    ) {
+        updatedInvestment.setTotalInvestment();
+        portfolio.addToPortfolio(updatedInvestment);
+    }
+
+    private static void rebalancePortfolio(
+            Portfolio portfolio,
+            Investment updatedInvestment
+    ) {
+        Investment latestInvestment = portfolio.getLatestInvestment();
+        double latestTotalInvestment = latestInvestment.getTotalInvestment();
+        List<Double> portfolioAllocatedPercentages = portfolio.getAllocatedPercentage();
+
+        for (double allocatedPercentage : portfolioAllocatedPercentages) {
+            updatedInvestment.addToInvestment(allocatedPercentage * latestTotalInvestment);
+        }
+    }
+
+    public static boolean isRebalancePossible(Portfolio portfolio) {
+        final int OFFSET = 1;
+        final int REBALANCE_INTERVAL = 6;
+        final int ZERO = 0;
+
+        return (portfolio.getPortfolioSize() - OFFSET) % REBALANCE_INTERVAL == ZERO;
     }
 
 }
