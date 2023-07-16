@@ -11,21 +11,13 @@ import java.util.stream.Stream;
 
 import static com.example.geektrust.helpers.FileInstructionHelper.extractCommandFromInstruction;
 import static com.example.geektrust.helpers.FileInstructionHelper.extractNumericValuesFromInstruction;
+import static com.example.geektrust.helpers.FileInstructionHelper.extractValuesFromInstruction;
 import static com.example.geektrust.helpers.FileInstructionHelper.getInstructionFromFileLine;
 import static com.example.geektrust.helpers.FileInstructionHelper.getTrimmedLinesAsList;
-import static com.example.geektrust.helpers.FileInstructionHelper.extractValuesFromInstruction;
 import static com.example.geektrust.helpers.FileInstructionHelper.readLinesFromFile;
 import static com.example.geektrust.helpers.MathHelper.computeFlooredPercentage;
 
 public class Main {
-
-    public enum Command  {
-        ALLOCATE,
-        SIP,
-        CHANGE,
-        BALANCE,
-        REBALANCE
-    }
 
     public static void main(String[] args) {
 
@@ -56,7 +48,6 @@ public class Main {
                     case REBALANCE:
                         rebalancePortfolioAndDisplayBalance(portfolio);
                         break;
-
                 }
             }
         } catch (Exception e) {
@@ -243,6 +234,14 @@ public class Main {
         final int ZERO = 0;
 
         return (portfolio.getPortfolioSize() - OFFSET) % REBALANCE_INTERVAL == ZERO;
+    }
+
+    public enum Command {
+        ALLOCATE,
+        SIP,
+        CHANGE,
+        BALANCE,
+        REBALANCE
     }
 
 }
