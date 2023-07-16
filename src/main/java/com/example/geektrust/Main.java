@@ -60,28 +60,8 @@ public class Main {
             String[] funds
     ) {
         Investment investment = new Investment();
-        allocateFunds(investment, funds);
-        updatePortfolioAndSetAllocatedPercentage(portfolio, investment);
-    }
-
-    private static void allocateFunds(
-            Investment investment,
-            String[] funds
-    ) {
-        for (String fund : funds) {
-            investment.addToInvestment(
-                    Double.parseDouble(fund)
-            );
-        }
-        investment.setTotalInvestment();
-    }
-
-    private static void updatePortfolioAndSetAllocatedPercentage(
-            Portfolio portfolio,
-            Investment investment
-    ) {
-        addToPortfolioAndRecordOperation(portfolio, investment);
-        portfolio.setAllocatedPercentage();
+        investment.allocateFunds(funds);
+        portfolio.updatePortfolioAndSetAllocatedPercentage(investment);
     }
 
     public static void updateInvestmentAndPortfolioAsPerMarketChange(
@@ -91,61 +71,8 @@ public class Main {
         List<Double> marketChangeValues = extractNumericValuesFromInstruction(marketChangeInstructionValues);
         Investment investmentAfterMarketChange = new Investment();
 
-        updateInvestmentAfterMarketChange(portfolio, marketChangeValues, investmentAfterMarketChange);
-        addToPortfolioAndRecordOperation(portfolio, investmentAfterMarketChange);
-    }
-
-    private static void updateInvestmentAfterMarketChange(
-            Portfolio portfolio,
-            List<Double> marketChangeValues,
-            Investment investmentAfterMarketChange
-    ) {
-
-        for (int i = 0; i < marketChangeValues.size(); i++) {
-            double latestInvestmentValue = getLatestInvestmentValue(portfolio, i);
-            double marketChangeValue = marketChangeValues.get(i);
-
-            double investmentValueAfterMarketChange = computeInvestmentValueAfterMarketChange(
-                    latestInvestmentValue,
-                    marketChangeValue
-            );
-            investmentAfterMarketChange.addToInvestment(investmentValueAfterMarketChange);
-        }
-
-        investmentAfterMarketChange.setTotalInvestment();
-    }
-
-    public static double getLatestInvestmentValue(
-            Portfolio portfolio,
-            int index
-    ) {
-        Investment latestInvestment = portfolio.getLatestInvestment();
-        double latestInvestmentValue;
-
-        if (portfolio.isFirstOperation()) {
-            latestInvestmentValue = latestInvestment.getInvestmentValue(index);
-        } else {
-            latestInvestmentValue = latestInvestment.getInvestmentValue(index) +
-                    portfolio.getSystematicInvestmentPlanAmount(index);
-        }
-
-        return latestInvestmentValue;
-    }
-
-    public static double computeInvestmentValueAfterMarketChange(
-            Double latestInvestmentValue,
-            Double marketChangeValue
-    ) {
-        double percentChangeInInvestment = computeFlooredPercentage(latestInvestmentValue, marketChangeValue);
-        return percentChangeInInvestment + latestInvestmentValue;
-    }
-
-    private static void addToPortfolioAndRecordOperation(
-            Portfolio portfolio,
-            Investment investmentAfterMarketChange
-    ) {
-        portfolio.addToPortfolio(investmentAfterMarketChange);
-        portfolio.recordOperation();
+        investmentAfterMarketChange.updateInvestmentAfterMarketChange(portfolio, marketChangeValues);
+        portfolio.addToPortfolioAndRecordOperation(investmentAfterMarketChange);
     }
 
     public static void displayBalanceByMonthFromBalancePrintingInstruction(
@@ -154,7 +81,7 @@ public class Main {
     ) {
         int monthIndex = getMonthIndexFromBalancePrintingInstructionValues(balancePrintingInstructionValues);
         Investment investmentByMonth = portfolio.getInvestmentByMonth(monthIndex);
-        displayBalance(investmentByMonth);
+        investmentByMonth.displayBalance();
     }
 
     public static int getMonthIndexFromBalancePrintingInstructionValues(String[] balancePrintingInstructionValues) {
@@ -163,65 +90,19 @@ public class Main {
         return Month.valueOf(monthName).getMonthNumber();
     }
 
-    private static void displayBalance(Investment investmentByMonth) {
-        String balanceString = buildBalanceString(investmentByMonth);
-        System.out.println(balanceString);
-    }
-
-    public static String buildBalanceString(Investment investment) {
-        StringBuilder stringBuilder = new StringBuilder();
-        String separator = " ";
-
-        for (int i = 0; i < investment.getInvestmentCount(); i++) {
-            stringBuilder.append(investment.getInvestmentValue(i).shortValue());
-            stringBuilder.append(separator);
-        }
-
-        return stringBuilder.toString();
-    }
-
     public static void rebalancePortfolioAndDisplayBalance(Portfolio portfolio) {
-        if (isRebalancePossible(portfolio)) {
+        if (portfolio.isRebalancePossible()) {
             updatePortfolioAndDisplayBalanceAfterRebalance(portfolio);
         } else {
             System.out.println("CANNOT_REBALANCE");
         }
     }
 
-    public static boolean isRebalancePossible(Portfolio portfolio) {
-        final int OFFSET = 1;
-        final int REBALANCE_INTERVAL = 6;
-        final int ZERO = 0;
-
-        return (portfolio.getPortfolioSize() - OFFSET) % REBALANCE_INTERVAL == ZERO;
-    }
-
     private static void updatePortfolioAndDisplayBalanceAfterRebalance(Portfolio portfolio) {
         Investment updatedInvestment = new Investment();
-        rebalancePortfolio(portfolio, updatedInvestment);
-        setTotalInvestmentAndAddToPortfolio(portfolio, updatedInvestment);
-        displayBalance(updatedInvestment);
-    }
-
-    private static void rebalancePortfolio(
-            Portfolio portfolio,
-            Investment updatedInvestment
-    ) {
-        Investment latestInvestment = portfolio.getLatestInvestment();
-        double latestTotalInvestment = latestInvestment.getTotalInvestment();
-        List<Double> portfolioAllocatedPercentages = portfolio.getAllocatedPercentage();
-
-        for (double allocatedPercentage : portfolioAllocatedPercentages) {
-            updatedInvestment.addToInvestment(allocatedPercentage * latestTotalInvestment);
-        }
-    }
-
-    private static void setTotalInvestmentAndAddToPortfolio(
-            Portfolio portfolio,
-            Investment updatedInvestment
-    ) {
-        updatedInvestment.setTotalInvestment();
-        portfolio.addToPortfolio(updatedInvestment);
+        portfolio.rebalancePortfolio(updatedInvestment);
+        portfolio.setTotalInvestmentAndAddToPortfolio(updatedInvestment);
+        updatedInvestment.displayBalance();
     }
 
     public enum Command {
