@@ -35,7 +35,6 @@ public class Main {
 
             Portfolio portfolio = new Portfolio();
             Investment updatedInvestment = new Investment();
-            Investment investment = new Investment();
 
             for (String fileLine : fileLines) {
                 String[] instruction = getInstructionFromFileLine(fileLine);
@@ -44,7 +43,7 @@ public class Main {
 
                 switch (command) {
                     case ALLOCATE:
-                        allocateFundsAndUpdatePortfolio(portfolio, investment, instructionValues);
+                        allocateFundsAndUpdatePortfolio(portfolio, instructionValues);
                         break;
                     case SIP:
                         addSipToPortfolio(portfolio, instructionValues);
@@ -82,9 +81,9 @@ public class Main {
 
     public static void allocateFundsAndUpdatePortfolio(
             Portfolio portfolio,
-            Investment investment,
             String[] funds
     ) {
+        Investment investment = new Investment();
         allocateFunds(investment, funds);
         updatePortfolioAndSetAllocatedPercentage(portfolio, investment);
     }
