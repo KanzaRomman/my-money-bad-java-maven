@@ -2,6 +2,7 @@ package com.example.geektrust;
 
 import com.example.geektrust.dtos.Investment;
 import com.example.geektrust.dtos.Portfolio;
+import com.example.geektrust.enums.Command;
 import com.example.geektrust.enums.Month;
 
 import java.io.File;
@@ -103,14 +104,6 @@ public class Main {
         portfolio.rebalancePortfolio(updatedInvestment);
         portfolio.setTotalInvestmentAndAddToPortfolio(updatedInvestment);
         updatedInvestment.displayBalance();
-    }
-
-    public enum Command {
-        ALLOCATE,
-        SIP,
-        CHANGE,
-        BALANCE,
-        REBALANCE
     }
 
 }

@@ -1,6 +1,6 @@
 package com.example.geektrust.helpers;
 
-import com.example.geektrust.Main.Command;
+import com.example.geektrust.enums.Command;
 
 import java.io.IOException;
 import java.nio.file.Files;
