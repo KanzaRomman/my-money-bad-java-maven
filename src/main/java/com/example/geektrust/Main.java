@@ -16,7 +16,7 @@ import static com.example.geektrust.helpers.FileInstructionHelper.extractValuesF
 import static com.example.geektrust.helpers.FileInstructionHelper.getInstructionFromFileLine;
 import static com.example.geektrust.helpers.FileInstructionHelper.getTrimmedLinesAsList;
 import static com.example.geektrust.helpers.FileInstructionHelper.readLinesFromFile;
-import static com.example.geektrust.helpers.MathHelper.computeFlooredPercentage;
+
 
 public class Main {
 
