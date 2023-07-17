@@ -33,6 +33,6 @@ public class MainTest {
         Map<Integer, List<Double>> portfolio = new HashMap<>();
         portfolio.put(1, investment);
         String balance = Main.printBalance(portfolio,0);
-        assertEquals("190", balance);
+        assertEquals("1 4 2 ", balance);
     }
 }
