@@ -48,5 +48,3 @@ I also made the following enhancements to the code:
   - Replaced magic numbers with constants
   - Decomposed larger functions
 - Fixed existing and added additional unit tests for all the classes and edge cases.
-
-Feel free to explore the code and review the changes made to further enhance the solution.
