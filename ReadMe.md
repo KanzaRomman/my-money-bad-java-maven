@@ -28,3 +28,25 @@ Internally both the scripts run the following commands
 
 You can refer our help documents [here](https://help.geektrust.in)
 You can read build instructions [here](https://github.com/geektrust/coding-problem-artefacts/tree/master/Java)
+
+# Improvements Made
+
+In the process of improving the code, I identified and fixed a bug that was not explicitly mentioned in the requirements. 
+The bug caused incorrect calculation of investment values in certain scenarios. 
+By making the necessary adjustments in the code, 
+I ensured accurate investment calculations and improved the overall reliability of the solution.
+
+I also made the following enhancements to the code:
+
+- Refactored the code to adhere to clean code principles like:
+  - Reduced code complexity
+  - Used dedicated value objects instead of primitive types
+  - Found out correlation between variables and grouped them into objects and properties
+  - Utilised Polymorphism to replace switch cases
+  - Followed scout rule, fixed existing issues, removed unnecessary code
+  - Used explanatory variable names
+  - Replaced magic numbers with constants
+  - Decomposed larger functions
+- Fixed existing and added additional unit tests for all the classes and edge cases.
+
+Feel free to explore the code and review the changes made to further enhance the solution.
