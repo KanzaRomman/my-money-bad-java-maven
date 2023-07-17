@@ -67,4 +67,13 @@ public class MainTest {
         String balance = Main.printBalance(portfolio,0);
         assertEquals("1 4 2 ", balance);
     }
+
+    @Test
+    public void printBalance_WithValuesExpectedToBeFloored() {
+        List<Double> investment = Arrays.asList(1.3,4.5,2.9,8.9);
+        Map<Integer, List<Double>> portfolio = new HashMap<>();
+        portfolio.put(1, investment);
+        String balance = Main.printBalance(portfolio,0);
+        assertEquals("1 4 3 ", balance);
+    }
 }
