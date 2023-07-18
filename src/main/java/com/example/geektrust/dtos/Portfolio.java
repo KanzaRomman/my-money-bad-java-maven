@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.geektrust.constants.GeneralConstant.ZERO;
+
 public class Portfolio {
     private final Map<Integer, Investment> portfolios;
     private final List<Double> systematicInvestmentPlan;
@@ -13,7 +15,6 @@ public class Portfolio {
     private static final int INITIAL_MONTH = 0;
     private static final int REBALANCE_INTERVAL = 6;
     private static final int OFFSET = 1;
-    private static final int ZERO = 0;
 
     public Portfolio() {
         portfolios = new HashMap<>();

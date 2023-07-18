@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.example.geektrust.constants.GeneralConstant.ZERO;
 import static com.example.geektrust.helpers.FileInstructionHelper.extractCommandFromInstruction;
 import static com.example.geektrust.helpers.FileInstructionHelper.extractValuesFromInstruction;
 import static com.example.geektrust.helpers.FileInstructionHelper.getInstructionFromFileLine;
@@ -20,7 +21,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Path filePath = new File(args[0]).toPath();
+        String firstArgument = args[ZERO];
+        Path filePath = new File(firstArgument).toPath();
+
         try (Stream<String> rawFileLines = readLinesFromFile(filePath)) {
             List<String> fileLines = getTrimmedLinesAsList(rawFileLines);
             Portfolio portfolio = new Portfolio();
@@ -36,6 +39,7 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
 }
